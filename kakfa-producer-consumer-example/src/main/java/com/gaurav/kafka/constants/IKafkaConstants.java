@@ -1,7 +1,7 @@
 package com.gaurav.kafka.constants;
 
 public interface IKafkaConstants {
-	public static String KAFKA_BROKERS = "localhost:9092";
+	public static String KAFKA_BROKERS = "10.202.70.138:9092";
 	
 	public static Integer MESSAGE_COUNT=1000;
 	
@@ -11,7 +11,7 @@ public interface IKafkaConstants {
 	
 	public static String GROUP_ID_CONFIG="consumerGroup10";
 	
-	public static Integer MAX_NO_MESSAGE_FOUND_COUNT=100;
+	public static Integer MAX_NO_MESSAGE_FOUND_COUNT=1000;
 	
 	public static String OFFSET_RESET_LATEST="latest";
 	
