@@ -3,13 +3,8 @@ package com.gaurav.kafka;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.StringTokenizer;
-import java.util.concurrent.ExecutionException;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -25,26 +20,20 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 
 import com.gaurav.kafka.constants.EmailConstants;
 import com.gaurav.kafka.constants.IKafkaConstants;
 import com.gaurav.kafka.consumer.ConsumerCreator;
 import com.gaurav.kafka.pojo.EmailTryingDTO;
-import com.gaurav.kafka.producer.ProducerCreator;
 import com.google.gson.Gson;
 
 public class App {
 	public static void main(String[] args) {
-//		runProducer();
 		runConsumer();
 	}
 
 	static void runConsumer() {
 		Consumer<Long, String> consumer = ConsumerCreator.createConsumer();
-//		EmailTryingDTO dto = new EmailTryingDTO();
 		int noMessageToFetch = 0;
 
 		while (true) {
@@ -57,6 +46,7 @@ public class App {
 					continue;
 			}
 
+        	System.out.println("Consumer: I am up");
 			consumerRecords.forEach(record -> {
 				System.out.println("Record Key " + record.key());
 				System.out.println("Record value " + record.value());
@@ -76,9 +66,9 @@ public class App {
 						dto.getTo(),
 						dto.getSubject(),
 						dto.getBody());
-	        	System.out.println("Deu bom");
+	        	System.out.println("Consumer: Deu bom");
 	        } catch (Exception e) {
-	        	System.out.println("Nao deu bom");
+	        	System.out.println("Consumer: Nao deu bom");
 	    	}
 			});
 				consumer.commitAsync();
@@ -86,30 +76,6 @@ public class App {
 		consumer.close();
 	}
 
-	static void runProducer() {
-		Producer<Long, String> producer = ProducerCreator.createProducer();
-		Scanner scanner = new Scanner(System.in);
-		for (int index = 0; index < IKafkaConstants.MESSAGE_COUNT; index++) {
-			String input = null;
-			while (input == null){
-				input = scanner.nextLine();				
-			}
-			final ProducerRecord<Long, String> record = new ProducerRecord<Long, String>(IKafkaConstants.TOPIC_NAME,
-					"This is record " + index + "  my input: " + input);
-			try {
-				RecordMetadata metadata = producer.send(record).get();
-				System.out.println("Record sent with key " + index + " to partition " + metadata.partition()
-						+ " with offset " + metadata.offset());
-			} catch (ExecutionException e) {
-				System.out.println("Error in sending record");
-				System.out.println(e);
-			} catch (InterruptedException e) {
-				System.out.println("Error in sending record");
-				System.out.println(e);
-			}
-		}
-		scanner.close();
-	}
 	
 	public static void mailLikeAS(String host, String from, String password, String to, String subject, String body) {
 		String[] novoTo = getMailToArray(to);
