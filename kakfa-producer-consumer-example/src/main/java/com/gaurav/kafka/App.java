@@ -35,8 +35,13 @@ public class App {
 	static void runConsumer() {
 		Consumer<Long, String> consumer = ConsumerCreator.createConsumer();
 		int noMessageToFetch = 0;
-
+		int i = 0;
 		while (true) {
+			if(i==3){
+				i = 0;	
+				System.out.println("Consumer: I am up");
+			} else {i++;}
+			
 			final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
 			if (consumerRecords.count() == 0) {
 				noMessageToFetch++;
@@ -46,7 +51,6 @@ public class App {
 					continue;
 			}
 
-        	System.out.println("Consumer: I am up");
 			consumerRecords.forEach(record -> {
 				System.out.println("Record Key " + record.key());
 				System.out.println("Record value " + record.value());
